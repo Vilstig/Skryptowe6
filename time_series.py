@@ -59,7 +59,7 @@ class TimeSeries:
 
     # Method requires dataFrame, index of columns with values and unit of measurements
     @classmethod
-    def from_dataframe(cls, df, index, unit):
+    def load_ts_from_dataframe(cls, df, index, unit):
         if index == 0:
             raise KeyError("Index zero contains Timestamp, cannot create TimeSeries")
 

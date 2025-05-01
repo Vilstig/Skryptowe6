@@ -1,6 +1,7 @@
 from datetime import datetime, date
 
 from data_parser import parse_metafile, parse_measures
+from measurements import Measurements
 from series_validator import OutlierDetector, CompositeValidator, ZeroSpikeDetector, ThresholdDetector
 from station import Station
 from time_series import TimeSeries
@@ -16,7 +17,7 @@ def station_test():
 def time_series_test():
     df, unit = parse_measures('data_S5/measurements/2023_CO_1g.csv')
 
-    time_series1 = TimeSeries.from_dataframe(df,1,unit)
+    time_series1 = TimeSeries.load_ts_from_dataframe(df, 1, unit)
 
     print(time_series1)
     print(f'Standard deviation of values: {time_series1.std}')
@@ -30,8 +31,8 @@ def time_series_test():
 def series_validator_test():
     df, unit = parse_measures('data_S5/measurements/2023_PM10_24g.csv')
 
-    time_series1 = TimeSeries.from_dataframe(df, 2, unit)
-    time_series2 = TimeSeries.from_dataframe(df, 4, unit)
+    time_series1 = TimeSeries.load_ts_from_dataframe(df, 2, unit)
+    time_series2 = TimeSeries.load_ts_from_dataframe(df, 4, unit)
 
     time_series = [time_series1, time_series2]
 
@@ -49,7 +50,26 @@ def series_validator_test():
 
         print()
 
+def measurements_test():
+    measurements = Measurements('data_S5/measurements/')
+
+    # __len__ test
+    print(len(measurements))
+
+    # __contains__ test
+    print('NOx' in measurements)
+    print('Mama' in measurements)
+
+    # get_by_parameter test
+    print(len(measurements.get_by_parameter('CO')))
+
+    # get_by_station test
+    for ts in measurements.get_by_station('DsOsieczow21'):
+        print(ts)
+
+
 if __name__ == '__main__':
     #station_test()
     #time_series_test()
-    series_validator_test()
+    #series_validator_test()
+    measurements_test()

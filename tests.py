@@ -1,10 +1,11 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from data_parser import parse_metafile, parse_measures
 from measurements import Measurements
 from series_validator import OutlierDetector, CompositeValidator, ZeroSpikeDetector, ThresholdDetector
 from station import Station
 from time_series import TimeSeries
+from simple_reporter import SimpleReporter
 
 
 def station_test():
@@ -67,9 +68,24 @@ def measurements_test():
     for ts in measurements.get_by_station('DsOsieczow21'):
         print(ts)
 
+def simple_reporter_test():
+    dates = [datetime(2023, 1, 1) + timedelta(hours=i) for i in range(5)]
+    values = [10.0, 12.0, 0, 11.0, 9.5]
+
+    example_series = TimeSeries("PM10", "PM10_LUB", "1h",
+                                dates, values, "µg/m³")
+
+    validators = [OutlierDetector(1.0), ZeroSpikeDetector(1), SimpleReporter()]
+
+    for validator in validators:
+        result = validator.analyze(example_series)
+
+        for message in result:
+            print(" ", message)
 
 if __name__ == '__main__':
     #station_test()
     #time_series_test()
     #series_validator_test()
     measurements_test()
+    #simple_reporter_test()

@@ -3,16 +3,18 @@ import re
 
 from data_parser import parse_measures
 from time_series import TimeSeries
+from typing import List
+from series_validator import SeriesValidator
 
 
 class Measurements:
     def __init__(self, directory):
         self.directory = directory
-        self.files = {}  # (param, freq, year) -> filepath
-        self.loaded_series = {}  # (param, freq, year, station_code) -> TimeSeries
+        self.files = {}  # (year, param, freq) -> filepath
+        self.loaded_series = {}  # (year, param, freq, station_code) -> TimeSeries
 
         # Wzorzec: np. "benzen_1g_2020.csv"
-        pattern = re.compile(r"(?P<year>\d{4})_(?P<param>\w+)_(?P<freq>\w+)\.csv")
+        pattern = re.compile(r"(?P<year>\d{4})_(?P<param>.+)_(?P<freq>\w+)\.csv")
 
         for filename in os.listdir(directory):
             match = pattern.fullmatch(filename)
@@ -49,7 +51,7 @@ class Measurements:
         for (year, param, freq) in self.files:
             if param == param_name:
                 self._ensure_loaded(year, param, freq)
-                for (y, p, f, station) in self.loaded_series:
+                for (y, p, f, station) in self.loaded_series: #couldnt this be done better in 2 seperate loops?
                     if (y, p, f) == (year, param, freq):
                         results.append(self.loaded_series[(y, p, f, station)])
         return results
@@ -57,9 +59,26 @@ class Measurements:
     def get_by_station(self, station_code):
         results = []
         for (year, param, freq) in self.files:
-            print(year, param, freq)
+            #print(year, param, freq)
             self._ensure_loaded(year, param, freq)
         for key, series in self.loaded_series.items():
             if key[3] == station_code:
                 results.append(series)
         return results
+
+    def detect_all_anomalies(self, validators: List[SeriesValidator], preload: bool = False):
+        all_anomalies = {}
+        if preload:
+            for (year, param, freq) in self.files:
+                self._ensure_loaded(year, param, freq)
+
+        for key, series in self.loaded_series.items():
+            results = []
+
+            for validator in validators:
+                results.extend(validator.analyze(series))
+
+            if results:
+                all_anomalies[key] = results
+
+        return all_anomalies

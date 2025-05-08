@@ -63,6 +63,7 @@ def measurements_test():
 
     # get_by_parameter test
     print(len(measurements.get_by_parameter('CO')))
+    print(len(measurements.get_by_parameter('NO2')))
 
     # get_by_station test
     for ts in measurements.get_by_station('DsOsieczow21'):

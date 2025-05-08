@@ -13,7 +13,6 @@ class Measurements:
         self.files = {}  # (year, param, freq) -> filepath
         self.loaded_series = {}  # (year, param, freq, station_code) -> TimeSeries
 
-        # Wzorzec: np. "benzen_1g_2020.csv"
         pattern = re.compile(r"(?P<year>\d{4})_(?P<param>.+)_(?P<freq>\w+)\.csv")
 
         for filename in os.listdir(directory):
@@ -23,11 +22,10 @@ class Measurements:
                 self.files[key] = os.path.join(directory, filename)
 
     def __len__(self):
-        # Liczba możliwych do załadowania TimeSeries = suma liczby stacji w plikach
         count = 0
         for key in self.files:
             df, unit = parse_measures(self.files[key])
-            count += len(df.columns) - 1  # zakładamy, że pierwsza kolumna to czas
+            count += len(df.columns) - 1  # first column contains timestamp
         return count
 
     def __contains__(self, parameter_name):
@@ -51,15 +49,16 @@ class Measurements:
         for (year, param, freq) in self.files:
             if param == param_name:
                 self._ensure_loaded(year, param, freq)
-                for (y, p, f, station) in self.loaded_series: #couldnt this be done better in 2 seperate loops?
-                    if (y, p, f) == (year, param, freq):
-                        results.append(self.loaded_series[(y, p, f, station)])
+
+        for (y, p, f, station) in self.loaded_series:  # couldnt this be done better in 2 seperate loops? Yes :)
+            if param_name == p:
+                results.append(self.loaded_series[(y, p, f, station)])
         return results
 
     def get_by_station(self, station_code):
         results = []
         for (year, param, freq) in self.files:
-            #print(year, param, freq)
+            # print(year, param, freq)
             self._ensure_loaded(year, param, freq)
         for key, series in self.loaded_series.items():
             if key[3] == station_code:

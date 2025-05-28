@@ -1,6 +1,12 @@
+from typing import Any
+
+import pandas as pd
+
 class Station:
-    def __init__(self, station_code, international_code, station_name, old_name, launch_date, close_date, station_type,
-                 area_type, type_of_station, voivodeship, town, address, latitude_n, longitude_e):
+    def __init__(self, station_code: str, international_code: str, station_name: str, old_name: str, launch_date: str,
+                 close_date: str, station_type: str,
+                 area_type: str, type_of_station: str, voivodeship: str, town: str, address: str, latitude_n: str,
+                 longitude_e: str) -> None:
         self.station_code = station_code
         self.international_code = international_code
         self.station_name = station_name
@@ -16,10 +22,10 @@ class Station:
         self.latitude_n = latitude_n
         self.longitude_e = longitude_e
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Station code: {self.station_code}, Station name: {self.station_name}'
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"Station(station_code={self.station_code!r}, international_code={self.international_code!r}, "
             f"station_name={self.station_name!r}, old_name={self.old_name!r}, launch_date={self.launch_date!r}, "
@@ -27,13 +33,13 @@ class Station:
             f"type_of_station={self.type_of_station!r}, voivodeship={self.voivodeship!r}, town={self.town!r}, "
             f"address={self.address!r}, latitude_n={self.latitude_n!r}, longitude_e={self.longitude_e!r})")
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Station):
             return False
         return self.station_code == other.station_code
 
     @classmethod
-    def from_dataframe_row(cls, row):
+    def from_dataframe_row(cls, row: pd.Series) -> 'Station':
         return cls(
             station_code=row["Kod stacji"],
             international_code=row["Kod międzynarodowy"],

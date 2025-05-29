@@ -6,12 +6,14 @@ import pandas as pd
 
 
 class TimeSeries:
-    def __init__(self, indicator_name: str, station_code: str, averaging_time: str, dates: list[datetime], values: list[Union[float, None]], unit: str) -> None:
+    def __init__(self, indicator_name: str, station_code: str, averaging_time: str, dates: list[datetime],
+                 values: list[Union[float, None]], unit: str) -> None:
         self.indicator_name = indicator_name  # np. "PM10"
         self.station_code = station_code  # kod stacji
         self.averaging_time = averaging_time  # np. "1h"
         self.dates = dates  # lista obiektów datetime
-        self.values = np.array(values)  # tablica numpy wartości (float lub None)
+        self.values = np.array([np.nan if v is None else v for v in values],
+                               dtype=float)  # tablica numpy wartości (float lub None)
         self.unit = unit  # np. "µg/m³"
 
     def __str__(self) -> str:
@@ -32,11 +34,8 @@ class TimeSeries:
                 self.station_code == other.station_code and
                 self.averaging_time == other.averaging_time)
 
-
-    def __getitem__(
-        self,
-        key: Union[int, slice, datetime, date]
-    ) -> Union[Tuple[datetime, float], List[Tuple[datetime, float]], float]:
+    def __getitem__(self, key: Union[int, slice, datetime, date]) -> Union[
+        Tuple[datetime, float], List[Tuple[datetime, float]], float]:
         # indeks lub slice
         if isinstance(key, int):
             single_date: datetime = self.dates[key]

@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 
-from data_parser import parse_metafile, parse_measures
-from measurements import Measurements
+from src.data_parser import parse_metafile, parse_measures
+from src.measurements import Measurements
 from series_validator import OutlierDetector, CompositeValidator, ZeroSpikeDetector, ThresholdDetector
 from station import Station
 from time_series import TimeSeries
@@ -9,14 +9,14 @@ from simple_reporter import SimpleReporter
 
 
 def station_test():
-    df = parse_metafile('data_S5/stacje.csv')
+    df = parse_metafile('../data_S5/stacje.csv')
 
     station1 = Station.from_dataframe_row(df.iloc[1])
 
     print(station1)
 
 def time_series_test():
-    df, unit = parse_measures('data_S5/measurements/2023_CO_1g.csv')
+    df, unit = parse_measures('../data_S5/measurements/2023_CO_1g.csv')
 
     time_series1 = TimeSeries.load_ts_from_dataframe(df, 1, unit)
 
@@ -30,7 +30,7 @@ def time_series_test():
     print(time_series1[date(2023, 1, 1)])
 
 def series_validator_test():
-    df, unit = parse_measures('data_S5/measurements/2023_PM10_24g.csv')
+    df, unit = parse_measures('../data_S5/measurements/2023_PM10_24g.csv')
 
     time_series1 = TimeSeries.load_ts_from_dataframe(df, 2, unit)
     time_series2 = TimeSeries.load_ts_from_dataframe(df, 4, unit)

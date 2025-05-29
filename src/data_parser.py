@@ -2,7 +2,7 @@ import pandas as pd
 import re
 import os
 from pathlib import Path
-from utils import create_path
+from src.utils import create_path
 #r before '' designates a raw string - you dont have to escape backslashes abd other special chars
 
 def parse_metafile(path):

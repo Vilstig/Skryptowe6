@@ -1,20 +1,4 @@
-from datetime import datetime
-
-from src.time_series import TimeSeries
-
-
-def create_timeseries(values):
-    return TimeSeries(indicator_name='PM10',
-                      station_code='123',
-                      averaging_time='1g',
-                      dates=[
-                          datetime(2024, 5, 1, 12, 0),
-                          datetime(2024, 5, 1, 13, 0),
-                          datetime(2024, 5, 1, 14, 0),
-                      ],
-                      values=values,
-                      unit='m'
-                      )
+from tests.test_utils import create_timeseries
 
 def test_timeseries_mean_std_full():
     ts = create_timeseries([2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])

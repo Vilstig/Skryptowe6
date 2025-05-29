@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 
-from time_series import TimeSeries
+from src.time_series import TimeSeries
 
 
 class SeriesValidator(metaclass=abc.ABCMeta):
@@ -65,7 +65,7 @@ class ThresholdDetector(SeriesValidator):
     def __init__(self, threshold: float) -> None:
         self.threshold = threshold
 
-    def analyze(self, series) -> List[str]:
+    def analyze(self, series) -> List[str]: #shouldnt it be series: SeriesValidator
         anomalies: List[str] = []
 
         for date, value in zip(series.dates, series.values):
@@ -80,7 +80,7 @@ class CompositeValidator(SeriesValidator):
         self.validators = validators
         self.mode = mode
 
-    def analyze(self, series) -> List[str]:
+    def analyze(self, series) -> List[str]: # shouldnt it be series: SeriesValidator
         all_messages: List[str] = []
         has_issues_flags: List[bool] = []
 

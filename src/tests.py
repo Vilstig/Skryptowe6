@@ -1,22 +1,23 @@
 from datetime import datetime, date, timedelta
 
-from src.data_parser import parse_metafile, parse_measures
-from src.measurements import Measurements
+from data_parser import parse_metafile, parse_measures
+from measurements import Measurements
 from series_validator import OutlierDetector, CompositeValidator, ZeroSpikeDetector, ThresholdDetector
 from station import Station
 from time_series import TimeSeries
 from simple_reporter import SimpleReporter
+from pathlib import Path
 
 
 def station_test():
-    df = parse_metafile('../data_S5/stacje.csv')
+    df = parse_metafile('data_S5/stacje.csv')
 
     station1 = Station.from_dataframe_row(df.iloc[1])
 
     print(station1)
 
 def time_series_test():
-    df, unit = parse_measures('../data_S5/measurements/2023_CO_1g.csv')
+    df, unit = parse_measures('data_S5/measurements/2023_CO_1g.csv')
 
     time_series1 = TimeSeries.load_ts_from_dataframe(df, 1, unit)
 
@@ -30,14 +31,14 @@ def time_series_test():
     print(time_series1[date(2023, 1, 1)])
 
 def series_validator_test():
-    df, unit = parse_measures('../data_S5/measurements/2023_PM10_24g.csv')
+    df, unit = parse_measures('data_S5/measurements/2023_PM10_24g.csv')
 
     time_series1 = TimeSeries.load_ts_from_dataframe(df, 2, unit)
     time_series2 = TimeSeries.load_ts_from_dataframe(df, 4, unit)
 
     time_series = [time_series1, time_series2]
 
-    series_validator1 = OutlierDetector(2)
+    series_validator1 = OutlierDetector(3)
     series_validator2 = ZeroSpikeDetector()
     series_validator3 = ThresholdDetector(50)
     series_validator4 = CompositeValidator(validators=[series_validator1, series_validator2, series_validator3], mode='AND')
@@ -48,11 +49,10 @@ def series_validator_test():
     for time_series in time_series:
         for series_validator in series_validators:
             print(series_validator.analyze(time_series))
-
         print()
 
 def measurements_test():
-    measurements = Measurements('data_S5/measurements/')
+    measurements = Measurements(Path('data_S5/measurements/'))
 
     # __len__ test
     print(len(measurements))
@@ -87,6 +87,6 @@ def simple_reporter_test():
 if __name__ == '__main__':
     #station_test()
     #time_series_test()
-    #series_validator_test()
-    measurements_test()
+    series_validator_test()
+    #measurements_test()
     #simple_reporter_test()

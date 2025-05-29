@@ -1,10 +1,10 @@
 import os
 import re
 
-from data_parser import parse_measures
-from time_series import TimeSeries
+from src.data_parser import parse_measures
+from src.time_series import TimeSeries
 from typing import List, Dict, Tuple, Union
-from series_validator import SeriesValidator
+from src.series_validator import SeriesValidator
 
 
 class Measurements:
@@ -44,7 +44,7 @@ class Measurements:
         if not any((y, p, f) == (year, param, freq) for (y, p, f, _) in self.loaded_series):
             self._load_series_from_file(year, param, freq)
 
-    def get_by_parameter(self, param_name) -> List[TimeSeries]:
+    def get_by_parameter(self, param_name) -> List[TimeSeries]: # param_name: str?
         results: List[TimeSeries] = []
         for (year, param, freq) in self.files:
             if param == param_name:
